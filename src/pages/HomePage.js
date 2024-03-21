@@ -1,34 +1,38 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import {UPDATE_TIME, COUNT_NEWS} from '../constants'
+import { UPDATE_TIME, COUNT_NEWS } from '../constants'
 
 function HomePage() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const getNews = async () => {
-      try {
-        const response = await axios.get('https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty');
-        const newStoryId = response.data.slice(0, COUNT_NEWS);
-        const newsPromises = newStoryId.map(id =>
-          axios.get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-        );
-        const newsResponses = await Promise.all(newsPromises);
-        const newsData = newsResponses.map(response => response.data);
-        console.log(newsData)
-        setNews(newsData);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching news:', error);
-      }
-    };
+  const getNews = async () => {
+    try {
+      const response = await axios.get('https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty');
+      const newStoryId = response.data.slice(0, COUNT_NEWS);
+      const newsPromises = newStoryId.map(id =>
+        axios.get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+      );
+      const newsResponses = await Promise.all(newsPromises);
+      const newsData = newsResponses.map(response => response.data);
+      console.log(newsData)
+      setNews(newsData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+    }
+  };
 
+  useEffect(() => {
     getNews();
 
     const intervalId = setInterval(getNews, UPDATE_TIME);
     return () => clearInterval(intervalId);
   }, []);
+
+  const handleRefresh = () => {
+    getNews();
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -37,6 +41,7 @@ function HomePage() {
   return (
     <div className="HomePage">
       <h1> {COUNT_NEWS} Hacker News Stories</h1>
+      <button onClick={handleRefresh}>Update</button>
       <ul>
         {news.map((story, index) => (
           story && (
