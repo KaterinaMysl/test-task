@@ -39,18 +39,18 @@ function NewsPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   if (story) {
     return (
-      <div className="story">
+      <div className="news-page">
         <h1> {story.title}</h1>
 
         <div>
           {story.url && (
-            <a href={story.url} target="_blank" rel="noopener noreferrer">
-              READ MORE
+            <a href={story.url} target="_blank" rel="noopener noreferrer" className="read-more">
+              READ MORE...
             </a>
           )}
           <p>Author: {story.by}</p>
@@ -70,13 +70,14 @@ function NewsPage() {
               ? ("0" + new Date(story.time * 1000).getMinutes()).slice(-2)
               : "N/A"}
           </p>
-          <button onClick={handleRefresh}>Update</button>
+
+          <Link to="/" className="link-route">Back to News List</Link>
           <div>Comments: {story.descendants}</div>
+          <button onClick={handleRefresh}>Update</button>
           {story && story.descendants > 0 && (
             <CommentTree commentIds={story.kids} />
           )}
         </div>
-        <Link to="/">Back to News List</Link>
       </div>
     );
   }

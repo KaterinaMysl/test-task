@@ -4,6 +4,8 @@ import axios from "axios";
 interface Comment {
   id: number;
   text: string;
+  time: number;
+  by: string;
   kids?: number[];
 }
 
@@ -39,13 +41,23 @@ const CommentTree = ({ commentIds }: CommentTreeProps) => {
   if (!comments || comments.length === 0) {
     return null;
   }
-
+  console.log(comments);
   return (
     <ul className="comment-list">
       {comments.map((comment) => (
         <li key={comment.id} className="comment-item">
           <div className="comment-content">
+            <div className="comment-info">
+              <div>{comment.by}</div>
+              <div>
+                {new Date(comment.time * 1000).toLocaleDateString()}{" "}
+                {("0" + new Date(comment.time * 1000).getHours()).slice(-2)}:
+                {("0" + new Date(comment.time * 1000).getMinutes()).slice(-2)}
+              </div>
+            </div>
+
             <div dangerouslySetInnerHTML={{ __html: comment.text }}></div>
+
             {comment.kids && comment.kids.length > 0 && (
               <CommentTree commentIds={comment.kids} />
             )}
@@ -57,4 +69,3 @@ const CommentTree = ({ commentIds }: CommentTreeProps) => {
 };
 
 export default CommentTree;
-

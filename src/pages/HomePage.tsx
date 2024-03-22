@@ -1,7 +1,7 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { UPDATE_TIME, COUNT_NEWS } from '../constants.tsx'
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { UPDATE_TIME, COUNT_NEWS } from "../constants.tsx";
 
 interface News {
   id: number;
@@ -18,17 +18,19 @@ function HomePage() {
 
   const getNews = async () => {
     try {
-      const response = await axios.get('https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty');
+      const response = await axios.get(
+        "https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty"
+      );
       const newStoryId = response.data.slice(0, COUNT_NEWS);
-      const newsPromises = newStoryId.map(id =>
+      const newsPromises = newStoryId.map((id) =>
         axios.get(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
       );
       const newsResponses = await Promise.all(newsPromises);
-      const newsData = newsResponses.map(response => response.data);
+      const newsData = newsResponses.map((response) => response.data);
       setNews(newsData);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching news:', error);
+      console.error("Error fetching news:", error);
     }
   };
 
@@ -44,25 +46,34 @@ function HomePage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   return (
-    <div className="home">
+    <div className="home-page">
       <h1> {COUNT_NEWS} Hacker News Stories</h1>
-      <button onClick={handleRefresh}>Update</button>
+      <button className="button" onClick={handleRefresh}>
+        Update
+      </button>
       <ul>
-        {news.map((story, index) => (
-          story && (
-            <li key={index}>
-              <Link to={`/news/${story.id}`}>{story.title}</Link>
-              <p>Rating: {story.score}</p>
-              <p>Author: {story.by}</p>
-              <div>Comments: {story.descendants}</div>
-              <p>Publication Date: {new Date(story.time * 1000).toLocaleDateString()} {('0' + new Date(story.time * 1000).getHours()).slice(-2)}:{('0' + new Date(story.time * 1000).getMinutes()).slice(-2)}</p>
-            </li>
-          )
-        ))}
+        {news.map(
+          (story, index) =>
+            story && (
+              <li key={index}>
+                <Link className="link" to={`/news/${story.id}`}>
+                  {story.title}
+                </Link>
+                <p>Rating: {story.score}</p>
+                <p>Author: {story.by}</p>
+                <p>
+                  Publication Date:{" "}
+                  {new Date(story.time * 1000).toLocaleDateString()}{" "}
+                  {("0" + new Date(story.time * 1000).getHours()).slice(-2)}:
+                  {("0" + new Date(story.time * 1000).getMinutes()).slice(-2)}
+                </p>
+              </li>
+            )
+        )}
       </ul>
     </div>
   );
