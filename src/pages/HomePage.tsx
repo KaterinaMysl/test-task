@@ -1,10 +1,19 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { UPDATE_TIME, COUNT_NEWS } from '../constants'
+import { UPDATE_TIME, COUNT_NEWS } from '../constants.tsx'
+
+interface News {
+  id: number;
+  title: string;
+  by: string;
+  score: number;
+  descendants: number;
+  time: number;
+}
 
 function HomePage() {
-  const [news, setNews] = useState([]);
+  const [news, setNews] = useState<News[]>([]);
   const [loading, setLoading] = useState(true);
 
   const getNews = async () => {
@@ -39,7 +48,7 @@ function HomePage() {
   }
 
   return (
-    <div className="HomePage">
+    <div className="home">
       <h1> {COUNT_NEWS} Hacker News Stories</h1>
       <button onClick={handleRefresh}>Update</button>
       <ul>
