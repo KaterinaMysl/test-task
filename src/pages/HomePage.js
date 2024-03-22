@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { UPDATE_TIME, COUNT_NEWS } from '../constants'
 
 function HomePage() {
@@ -15,7 +16,6 @@ function HomePage() {
       );
       const newsResponses = await Promise.all(newsPromises);
       const newsData = newsResponses.map(response => response.data);
-      console.log(newsData)
       setNews(newsData);
       setLoading(false);
     } catch (error) {
@@ -46,10 +46,10 @@ function HomePage() {
         {news.map((story, index) => (
           story && (
             <li key={index}>
-              <a href={story.url}>{story.title} (Переход на сайт)</a>
-              <p>{story.title} (Переход на карточку)</p>
+              <Link to={`/news/${story.id}`}>{story.title}</Link>
               <p>Rating: {story.score}</p>
               <p>Author: {story.by}</p>
+              <div>Comments: {story.descendants}</div>
               <p>Publication Date: {new Date(story.time * 1000).toLocaleDateString()} {('0' + new Date(story.time * 1000).getHours()).slice(-2)}:{('0' + new Date(story.time * 1000).getMinutes()).slice(-2)}</p>
             </li>
           )
